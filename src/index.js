@@ -1,10 +1,9 @@
-// require('dotenv').config()
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 import connectedDB from "./db/index.js";
 
-dotenv.config({
-  path: './.env'
-});
+dotenv.config({ path: "./.env" });
 
 
-connectedDB()
+// console.log(process.env.MONGODB_URI);
+
+connectedDB();
