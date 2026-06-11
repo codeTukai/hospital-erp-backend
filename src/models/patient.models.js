@@ -2,7 +2,7 @@ import mongoose, {Schema} from "mongoose";
 
 const patientSchema = new Schema({
     userId:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "User"
     },
     patientId: {
@@ -11,7 +11,7 @@ const patientSchema = new Schema({
     },
     age:{
         type: String,
-        
+
     }
 
 }, {timestamps: true})
