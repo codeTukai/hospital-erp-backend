@@ -30,7 +30,10 @@ const userSchema = new Schema({
     type: String,
     enum: ["admin", "doctor", "patient", "receptionist", "nurse"]
   },
-   avatar: String
+   avatar: String,
+   refreshToken:{
+    type: String
+   }
 },{timestamps: true})
 
 export const User = mongoose.model("User", userSchema)
