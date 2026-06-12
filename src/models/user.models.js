@@ -12,7 +12,9 @@ const userSchema = new Schema({
     email:{
         type: String,
         required: true,
-        tolowerCase: true
+        unique:true,
+        tolowerCase: true,
+        trim : true
     },
     fullName:{
         type: String,
@@ -20,17 +22,21 @@ const userSchema = new Schema({
     },
     mobile:{
         type : Number,
-        required: optional,
+        required: true,
+        default: null
     },
     password:{
         type: String,
         required: true,
+        unique: true
     },
     role: {
     type: String,
     enum: ["admin", "doctor", "patient", "receptionist", "nurse"]
   },
-   avatar: String,
+   avatar: {
+    type : String
+   },
    refreshToken:{
     type: String
    }

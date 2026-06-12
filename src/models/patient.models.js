@@ -11,7 +11,25 @@ const patientSchema = new Schema({
     },
     age:{
         type: String,
+        default: null
 
+    },
+    gender:{
+        type: String,
+        enum : ["Male", "Female", "Transgender"]
+    },
+    bloodGroup: {
+        type: String,
+        enum: ["A+", "B+", "O+", "AB+", "AB-", "O-"],
+    },
+    address:{
+        type: String
+    },
+    emergencyContactNo:{
+        type: Number
+    },
+    medicalHistory:{
+        type: [String]
     }
 
 }, {timestamps: true})
