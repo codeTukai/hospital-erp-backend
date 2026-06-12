@@ -7,10 +7,11 @@ const patientSchema = new Schema({
     },
     patientId: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     age:{
-        type: String,
+        type: Number,
         default: null
 
     },
@@ -20,16 +21,17 @@ const patientSchema = new Schema({
     },
     bloodGroup: {
         type: String,
-        enum: ["A+", "B+", "O+", "AB+", "AB-", "O-"],
+        enum: ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"],
     },
     address:{
         type: String
     },
     emergencyContactNo:{
-        type: Number
+        type: String
     },
     medicalHistory:{
-        type: [String]
+        type: [String],
+        default: []
     }
 
 }, {timestamps: true})
