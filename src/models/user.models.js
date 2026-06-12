@@ -19,6 +19,7 @@ const userSchema = new Schema({
     fullName:{
         type: String,
         required: true,
+        trim: true
     },
     mobile:{
         type :String,
@@ -27,7 +28,7 @@ const userSchema = new Schema({
     },
     password:{
         type: String,
-        required: true,
+        required: [true, "Password is required!"],
         unique: true
     },
     role: {
