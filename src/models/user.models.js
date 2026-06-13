@@ -45,13 +45,51 @@ const userSchema = new Schema({
    }
 },{timestamps: true})
 
-userSchema.pre("save", async function(next){ //pre is a hook which works when its require to execute any operation then call pre//pre() is a middleware (hook) that runs before a specific Mongoose operation is executed.
-    if(this.isModified("password")){
+// pre() is a Mongoose middleware (hook) that runs automatically
+// before a specified operation such as save, update, or delete.
+//Access token did not save into database
 
-        this.password = bcrypt.hash(this.password, 10)
-        next()
-    }
-    next()
+userSchema.pre("save", async function(next){ //pre is a hook which works when its require to execute any operation then call pre//pre() is a middleware (hook) that runs before a specific Mongoose operation is executed.
+    if(!this.isModified("password")) return next();
+
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
+    
+    
 })
+
+userSchema.methods.isPasswordCompared = async function(password){
+  return await bcrypt.compare(password, this.password)
+}
+
+//payload--A payload is the actual data being transmitted in a request, response, token, or message. It contains the useful information that the sender wants to deliver to the receiver.
+userSchema.methods.generateAccessToken = function(){
+     return jwt.sign(
+        {
+            _id = this._id,
+            email: this.email,
+            username: this.username,
+            fullName: this.fullName
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expireIn:process.env.ACCESS_TOKEN_EXPIRY
+        }
+     )
+}
+
+userSchema.methods.generateRefreshToken = function(){
+    return jwt.sign(
+        {
+            _id = this._id,
+            //_id -> my payload data = this._data from database
+           
+        },
+        process.env.ACCESS_REFRESH_SECRET,
+        {
+            expiresIn:process.env.ACCESS_REFRESH_EXPIRY
+        }
+     )
+}
 
 export const User = mongoose.model("User", userSchema)
