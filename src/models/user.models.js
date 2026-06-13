@@ -1,4 +1,6 @@
 import mongoose, {Schema} from "mongoose";
+import bcrypt from 'bcrypt'
+import jsw from 'jsonwebtoken'
 
 const userSchema = new Schema({
     username:{
@@ -42,5 +44,14 @@ const userSchema = new Schema({
     type: String
    }
 },{timestamps: true})
+
+userSchema.pre("save", async function(next){ //pre is a hook which works when its require to execute any operation then call pre//pre() is a middleware (hook) that runs before a specific Mongoose operation is executed.
+    if(this.isModified("password")){
+
+        this.password = bcrypt.hash(this.password, 10)
+        next()
+    }
+    next()
+})
 
 export const User = mongoose.model("User", userSchema)
