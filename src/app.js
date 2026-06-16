@@ -23,6 +23,15 @@ app.use(express.urlencoded({
 
 app.use(express.static("public"))
 
+//import
 
+import userRoutes from './routes/user.routes.js'
+
+
+
+
+//routes
+
+app.use("/api/v1/users", userRoutes)
 
 export {app}
