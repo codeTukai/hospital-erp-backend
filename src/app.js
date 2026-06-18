@@ -26,17 +26,12 @@ app.use(express.static("public"))
 
 //import
 
-// import userRouter from './routes/user.routes.js'
+import userRouter from './routes/user.routes.js'
 
 
 
 
 //routes
-
-// app.use("/api/v1/users", userRouter)
-
-import userRouter from "./routes/user.routes.js";
-// import videosRouter from "./routes/video.routes.js"
 
 app.use("/api/v1/users", userRouter)
 
