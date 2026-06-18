@@ -16,16 +16,16 @@ const userRegister = asyncHandler(async( req, res ) => {
 // check for user creation 
 //return response
 
-const {email, password, userName, fullName} = res.body; // data coming from db via form and json -- url -- req.param
+const {email, password, userName, fullName} = req.body; // data coming from db via form and json -- url -- req.param
 
-// console.log("email", email);
-
-
+console.log("email", email);
 
 
-// res.status(200).json({
-//     message: "ok"
-// })
+
+
+res.status(200).json({
+    message: "ok"
+})
 })
 
 
