@@ -1,6 +1,7 @@
 import { ApiResponse } from '../utils/ApiResponse.js';
 import {ApiError} from '../utils/ApiError.js';
 import { asyncHandler} from '../utils/asyncHandler.js'
+import {User} from '../models/user.models.js'
 
 
 const userRegister = asyncHandler(async( req, res ) => {
@@ -18,14 +19,18 @@ const userRegister = asyncHandler(async( req, res ) => {
 
 const {email, password, userName, fullName} = req.body; // data coming from db via form and json -- url -- req.param
 
-console.log("email", email);
+// console.log("email", email);
 
-
-
-
-res.status(200).json({
-    message: "ok"
+if(
+    [email, fullName, userName, password].some((fields)=> fields?.trim() === "")
+){
+    throw new ApiError(400, "all fields are required")
+}
+   
+User.findOne({
+    $or:[{},{}]
 })
+
 })
 
 
