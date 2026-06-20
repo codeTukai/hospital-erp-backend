@@ -23,7 +23,7 @@ const {email, password, userName, fullName} = req.body; // data coming from db v
 // console.log("email", email);
 
 if(
-    [email, fullName, userName, password].some((fields)=> fields?.trim() === "")
+    [email, fullName, mobile, userName, password].some((fields)=> fields?.trim() === "")
 ){
     throw new ApiError(400, "all fields are required")
 }
@@ -34,8 +34,6 @@ const existedUser = await User.findOne({
     },{
         email
     }]
-})
-
 })
 
 if (existedUser) {
@@ -79,6 +77,10 @@ return res.status(201).json(
         new ApiResponse(200, createdUser, "user register successfully done")
     
 )
+
+})
+
+
 
 
 export {userRegister}

@@ -1,6 +1,6 @@
 import mongoose, {Schema} from "mongoose";
 import bcrypt from 'bcrypt'
-import jsw from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 
 const userSchema = new Schema({
     username:{
@@ -15,7 +15,7 @@ const userSchema = new Schema({
         type: String,
         required: true,
         unique:true,
-        tolowerCase: true,
+        lowerCase: true,
         trim : true
     },
     fullName:{
@@ -24,14 +24,15 @@ const userSchema = new Schema({
         trim: true
     },
     mobile:{
-        type :String,
-        required: true,
-        default: null
-    },
+    type: String,
+    required: true,
+    unique: true,
+    trim: true
+},
     password:{
         type: String,
         required: [true, "Password is required!"],
-        unique: true
+        
     },
     role: {
     type: String,
@@ -83,7 +84,7 @@ userSchema.methods.generateAccessToken = function(){
 userSchema.methods.generateRefreshToken = function(){
     return jwt.sign(
         {
-            _id : this.id,
+            _id : this._id,
             //_id -> my payload data = this._data from database
            
         },
