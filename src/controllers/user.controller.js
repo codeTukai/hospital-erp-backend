@@ -2,6 +2,7 @@ import { ApiResponse } from '../utils/ApiResponse.js';
 import {ApiError} from '../utils/ApiError.js';
 import { asyncHandler} from '../utils/asyncHandler.js'
 import {User} from '../models/user.models.js'
+import {uploadCloudinary} from '../utils/cloudinary.js'
 
 
 const userRegister = asyncHandler(async( req, res ) => {
@@ -27,11 +28,57 @@ if(
     throw new ApiError(400, "all fields are required")
 }
    
-User.findOne({
-    $or:[{},{}]
+const existedUser = await User.findOne({
+    $or:[{
+        userName
+    },{
+        email
+    }]
 })
 
 })
+
+if (existedUser) {
+    throw new ApiError(409, "user already exist")
+}
+
+const avatarFilePath = req.files?.avatar[0]?.path;
+
+if (!avatarFilePath) {
+    throw new ApiError(404, "Avatar required")
+}
+
+const avatar = await uploadCloudinary(avatarFilePath)
+
+if (!avatar) {
+    throw new ApiError(404, "Avatar required")
+}
+
+const user = await User.create(
+    {
+        fullName,
+        avatar: avatar.url,
+        email,
+        password,
+        username: username.toLowerCase,
+        mobile,
+        role
+    }
+)
+
+const createdUser = await User.findById(user._id).select(
+    "-password -refreshToken"
+)
+
+if(!createdUser){
+    throw new ApiError(400, "something went wrong while registering")
+}
+
+return res.status(201).json(
+    
+        new ApiResponse(200, createdUser, "user register successfully done")
+    
+)
 
 
 export {userRegister}
