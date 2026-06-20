@@ -23,7 +23,7 @@ const {email, password, userName, fullName} = req.body; // data coming from db v
 // console.log("email", email);
 
 if(
-    [email, fullName, mobile, userName, password].some((fields)=> fields?.trim() === "")
+    [email, password, username, fullName, mobile, role].some((fields)=> fields?.trim() === "")
 ){
     throw new ApiError(400, "all fields are required")
 }
