@@ -18,7 +18,7 @@ const userRegister = asyncHandler(async( req, res ) => {
 // check for user creation 
 //return response
 
-const {email, password, userName, fullName} = req.body; // data coming from db via form and json -- url -- req.param
+const {email, password, username, fullName, mobile, role} = req.body; // data coming from db via form and json -- url -- req.param
 
 // console.log("email", email);
 
@@ -30,7 +30,7 @@ if(
    
 const existedUser = await User.findOne({
     $or:[{
-        userName
+        username
     },{
         email
     }]
@@ -40,7 +40,7 @@ if (existedUser) {
     throw new ApiError(409, "user already exist")
 }
 
-const avatarFilePath = req.files?.avatar[0]?.path;
+const avatarFilePath = req.files?.avatar?.[0]?.path;
 
 if (!avatarFilePath) {
     throw new ApiError(404, "Avatar required")
@@ -58,7 +58,7 @@ const user = await User.create(
         avatar: avatar.url,
         email,
         password,
-        username: username.toLowerCase,
+        username: username.toLowerCase(),
         mobile,
         role
     }
