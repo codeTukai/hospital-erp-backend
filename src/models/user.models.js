@@ -50,11 +50,11 @@ const userSchema = new Schema({
 // before a specified operation such as save, update, or delete.
 //Access token did not save into database
 
-userSchema.pre("save", async function(next){ //pre is a hook which works when its require to execute any operation then call pre//pre() is a middleware (hook) that runs before a specific Mongoose operation is executed.
-    if(!this.isModified("password")) return next();
+userSchema.pre("save", async function(){ //pre is a hook which works when its require to execute any operation then call pre//pre() is a middleware (hook) that runs before a specific Mongoose operation is executed.
+    if(!this.isModified("password")) return;
 
     this.password = await bcrypt.hash(this.password, 10);
-    next();
+    
     
     
 })

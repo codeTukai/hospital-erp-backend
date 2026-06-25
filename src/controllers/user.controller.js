@@ -21,6 +21,17 @@ const userRegister = asyncHandler(async( req, res ) => {
 const {email, password, username, fullName, mobile, role} = req.body; // data coming from db via form and json -- url -- req.param
 
 // console.log("email", email);
+// console.log("password", password);
+// console.log("username", username);
+// console.log("fullName", fullName);
+// console.log("mobile number", mobile);
+// console.log("role", role);
+
+// console.log(req.body);
+
+
+
+
 
 if(
     [email, password, username, fullName, mobile, role].some((fields)=> fields?.trim() === "")
@@ -37,16 +48,23 @@ const existedUser = await User.findOne({
 })
 
 if (existedUser) {
-    throw new ApiError(409, "user already exist")
+    throw new ApiError(409, "user with email or username already exists")
 }
 
-const avatarFilePath = req.files?.avatar?.[0]?.path;
+const avatarFilePath = req.files?.avatar[0]?.path;
+console.log(req.files);
+
+// console.log(avatarFilePath);
+
 
 if (!avatarFilePath) {
-    throw new ApiError(404, "Avatar required")
+    throw new ApiError(404, "Avatar file is required")
 }
 
 const avatar = await uploadCloudinary(avatarFilePath)
+
+console.log(avatar);
+
 
 if (!avatar) {
     throw new ApiError(404, "Avatar required")
@@ -55,7 +73,7 @@ if (!avatar) {
 const user = await User.create(
     {
         fullName,
-        avatar: avatar.url,
+        avatar: avatar.secure_url,
         email,
         password,
         username: username.toLowerCase(),
