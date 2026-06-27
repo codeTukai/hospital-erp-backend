@@ -59,7 +59,7 @@ userSchema.pre("save", async function(){ //pre is a hook which works when its re
     
 })
 
-userSchema.methods.isPasswordCompared = async function(password){
+userSchema.methods.isPasswordCorrect = async function(password){
   return await bcrypt.compare(password, this.password)
 }
 

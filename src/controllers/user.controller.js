@@ -73,7 +73,7 @@ if (!avatar) {
 const user = await User.create(
     {
         fullName,
-        avatar: avatar.secure_url,
+        avatar: avatar.url,
         email,
         password,
         username: username.toLowerCase(),
@@ -99,6 +99,42 @@ return res.status(201).json(
 })
 
 
+const userLogin = asyncHandler(async(req,res) => {
+
+    const {username, email, password } = req.body
+
+    if(!username || !email){
+        throw new ApiError(500, "email or username is required")
+    }
+
+    // const user = await User.findOne({email})  // only email based login 
+
+    const user = await User.findOne({  // username or email based login $or is the mongodb method
+        $or : [{username}, {email}]
+    })
+
+    if (!user) {
+        throw new ApiError(404, "user doesn't exists")
+    }
+
+    const passwordValid = await user.isPasswordCorrect(password)
+
+    if (!passwordValid) {
+        throw new ApiError(401, "UnAuthorized user")
+    }
+
+    //if password valid then create access token and refresh token
+    
 
 
-export {userRegister}
+
+
+
+})
+
+
+
+export {
+    userRegister,
+    userLogin
+}
