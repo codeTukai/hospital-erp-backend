@@ -14,6 +14,10 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
 
     return { accessToken, refreshToken }
 }
+const options = {
+    httpOnly : true,
+    secure: true
+}
 
 const userRegister = asyncHandler(async( req, res ) => {
 
@@ -138,7 +142,19 @@ const userLogin = asyncHandler(async(req,res) => {
 
     const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id)
 
+    const loggedInUser = await User.findOne(user._id).select("-password -refreshToken")
 
+    return res.status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+        new ApiResponse(200,
+        {
+            loggedInUser, accessToken, refreshToken
+        },
+        "User Logged In Successfully")
+    )
+    
 
 })
 
