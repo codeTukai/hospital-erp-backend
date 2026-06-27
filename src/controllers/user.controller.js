@@ -4,6 +4,16 @@ import { asyncHandler} from '../utils/asyncHandler.js'
 import {User} from '../models/user.models.js'
 import {uploadCloudinary} from '../utils/cloudinary.js'
 
+const generateAccessTokenAndRefreshToken = async (userId) => {
+    const user = await User.findById(userId)
+    const accessToken = user.generateAccessToken()
+    const refreshToken =  user.generateRefreshToken()
+
+    user.refreshToken = refreshToken
+    await user.save({validateBeforeSave: false})
+
+    return { accessToken, refreshToken }
+}
 
 const userRegister = asyncHandler(async( req, res ) => {
 
@@ -126,7 +136,7 @@ const userLogin = asyncHandler(async(req,res) => {
     //if password valid then create access token and refresh token
     
 
-
+    const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id)
 
 
 
