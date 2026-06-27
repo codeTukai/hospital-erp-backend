@@ -21,7 +21,7 @@ export default verifyJWT = asyncHandler(async (req, res, next) => {
     
      }
     
-     this.user = user
+     req.user = user
      next()
     } catch (error) {
         throw new ApiError(401, error.message || "invalid Access token")

@@ -160,10 +160,29 @@ const userLogin = asyncHandler(async(req,res) => {
 
 
 const loggedOutUser = asyncHandler(async (req, res) => {
-    
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $unset: {
+                refreshToken: 1 //this removes the field from document
+            }
+            
+        },
+        {
+           new: true
+        }
+    )
+
+    return res.status(200)
+    .cookie("accessToken", options)
+    .cookie("refreshToken", options)
+    .json(
+         new ApiResponse(201, {}, "User logged out")
+    )
 })
 
 export {
     userRegister,
-    userLogin
+    userLogin,
+    loggedOutUser
 }
