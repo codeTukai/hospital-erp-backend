@@ -7,7 +7,7 @@ import {uploadCloudinary} from '../utils/cloudinary.js'
 const generateAccessTokenAndRefreshToken = async (userId) => {
     const user = await User.findById(userId)
     const accessToken = user.generateAccessToken()
-    const refreshToken =  user.generateRefreshToken()
+    const refreshToken = user.generateRefreshToken()
 
     user.refreshToken = refreshToken
     await user.save({validateBeforeSave: false})
@@ -152,7 +152,9 @@ const userLogin = asyncHandler(async(req,res) => {
         {
             loggedInUser, accessToken, refreshToken
         },
-        "User Logged In Successfully")
+        
+        "User Logged In Successfully"
+     )
     )
     
 
