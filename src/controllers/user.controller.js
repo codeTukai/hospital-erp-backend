@@ -208,7 +208,8 @@ const loggedOutUser = asyncHandler(async (req, res) => {
 const generateRefreshToken = asyncHandler (async ( req, res ) => {
     const inComingRefreshToken = req.cookie.refreshToken || req.body.refreshToken
 
-    console.log(inComingRefreshToken);
+    console.log(inComingRefreshToken); 
+    
 
     if (!inComingRefreshToken) {
         throw new ApiError(401, "unauthorize request")
@@ -217,11 +218,14 @@ const generateRefreshToken = asyncHandler (async ( req, res ) => {
     try {
         const decoded = await jwt.verify(inComingRefreshToken, process.env.ACCESS_TOKEN_SECRET)
     
+        console.log(decoded)
+
         if(!decoded){
             throw new ApiError(401, "refresh token decoded failed")
         }
     
         const user = await User.findById(decoded?._id)
+        console.log(user)
     
         if(!user){
             throw new ApiError(401, "request failed")
