@@ -88,9 +88,9 @@ userSchema.methods.generateRefreshToken = function(){
             //_id -> my payload data = this._data from database
            
         },
-        process.env.ACCESS_REFRESH_SECRET,
+        process.env.REFRESH_TOKEN_SECRET,
         {
-            expiresIn:process.env.ACCESS_REFRESH_EXPIRY
+            expiresIn:process.env.REFRESH_TOKEN_EXPIRY
         }
      )
 }
