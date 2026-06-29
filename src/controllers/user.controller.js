@@ -4,15 +4,21 @@ import { asyncHandler} from '../utils/asyncHandler.js'
 import {User} from '../models/user.models.js'
 import {uploadCloudinary} from '../utils/cloudinary.js'
 
-const generateAccessTokenAndRefreshToken = async (userId) => {
-    const user = await User.findById(userId)
-    const accessToken = user.generateAccessToken()
-    const refreshToken = user.generateRefreshToken()
+const generateAccessTokenAndRefreshToken = async (userId) =>{
+try {
+      const user = await User.findById(userId)
+      const accessToken = await generateAccessToken()
+      const refreshToken = await generateRefreshToken()
 
-    user.refreshToken = refreshToken
-    await user.save({validateBeforeSave: false})
+      user.refreshToken = refreshToken
 
-    return { accessToken, refreshToken }
+      await user.save({ validateBeforeSave: false })
+
+      return { accessToken, refreshToken }
+
+} catch (error) {
+    throw new ApiError(500, "Something went wrong while generating refresh and access token")
+}
 }
 const options = {
     httpOnly : true,
@@ -113,52 +119,64 @@ return res.status(201).json(
 })
 
 
-const userLogin = asyncHandler(async(req,res) => {
+const userLogin = asyncHandler( async (req, res) => {
+    // existence of user ==> if exist then next step with login --> otherwise sign up / register
+    //userId, userPassword ==> if match --> generate-- accessToken, refreshToken
+    //otherwise forgot password
+    //last step cookies
 
-    const {username, email, password } = req.body
+    const {email, username, password} = req.body
 
-    if(!username || !email){
-        throw new ApiError(500, "email or username is required")
+    if((!email && !username)){
+        throw new ApiError(400, "email or username is required")
     }
 
-    // const user = await User.findOne({email})  // only email based login 
+    const user = await User.findOne({
+         $or: [
+            {email},
+            {username}
+        ]
+         
+        })
 
-    const user = await User.findOne({  // username or email based login $or is the mongodb method
-        $or : [{username}, {email}]
-    })
+    if(!user){
 
-    if (!user) {
-        throw new ApiError(404, "user doesn't exists")
+        throw new ApiError(404, "user not found")
     }
 
-    const passwordValid = await user.isPasswordCorrect(password)
+    const checkValidPassword = await user.isPasswordCorrect(password)
 
-    if (!passwordValid) {
-        throw new ApiError(401, "UnAuthorized user")
+    console.log(checkValidPassword)
+
+    if(!checkValidPassword){
+        throw new ApiError(401, "Invalid user credentials")
     }
 
-    //if password valid then create access token and refresh token
-    
+    // const accessToken = user.generateAccessToken()
+    // const refreshToken = user.generateRefreshToken()
+   
+   const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id)
+   console.log(accessToken);
+   
 
-    const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id)
+   const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
-    const loggedInUser = await User.findOne(user._id).select("-password -refreshToken")
+  
+console.log(res);
 
-    return res.status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
-    .json(
-        new ApiResponse(200,
-        {
-            loggedInUser, accessToken, refreshToken
-        },
-        
-        "User Logged In Successfully"
+return res.status(200)
+   .cookie("accessToken", accessToken, options)
+   .cookie("refreshToken", refreshToken, options)
+   .json(
+    new ApiResponse(200,{
+        user: loggedInUser, accessToken, refreshToken //optional
+    },
+    "User logged in successfully"
+
      )
-    )
-    
-
+   )
 })
+
 
 
 const loggedOutUser = asyncHandler(async (req, res) => {

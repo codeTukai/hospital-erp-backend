@@ -59,7 +59,7 @@ userSchema.pre("save", async function(){ //pre is a hook which works when its re
     
 })
 
-userSchema.methods.isPasswordCorrect = async function(password){
+userSchema.methods.isPasswordCorrect = async function(password){ //password is user--password // and this.password is database password thats user save while registering
   return await bcrypt.compare(password, this.password)
 }
 
@@ -95,19 +95,6 @@ userSchema.methods.generateRefreshToken = function(){
      )
 }
 
-//  userSchema.methods.generateRefreshToken = function(){
-//    return jwt.sign(
-//         {
-//             _id : this._id,
-           
-//         },
-//         process.env.REFRESH_TOKEN_SECRET,
-        
-//         {
-//             expiresIn: process.env.REFRESH_TOKEN_EXPIRY
-//         }
-//     )
-// }
 
 
 export const User = mongoose.model("User", userSchema)
