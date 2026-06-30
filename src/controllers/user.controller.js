@@ -245,7 +245,7 @@ const generateRefreshToken = asyncHandler (async ( req, res ) => {
     
 })
 
-const forgotPassword = asyncHandler (async (req, res) => {
+const changeCurrentPassword = asyncHandler (async (req, res) => {
     const { oldPassword, newPassword } = req.body
 
     const user = await User.findById(req.user?._id)
@@ -280,5 +280,5 @@ export {
     userLogin,
     loggedOutUser,
     generateRefreshToken,
-    forgotPassword
+    changeCurrentPassword
 }
