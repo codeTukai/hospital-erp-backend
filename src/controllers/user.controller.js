@@ -311,7 +311,7 @@ const updatedUserProfile = asyncHandler (async (req, res) => {
 const updateAvatar = asyncHandler( async (req, res) => {
     
 
-    const avatarFilePath = req.files?.avatar?.[0].path
+    const avatarFilePath = req.file?.path
 
      if(!avatarFilePath){
         throw new ApiError(500, "Avatar required")
