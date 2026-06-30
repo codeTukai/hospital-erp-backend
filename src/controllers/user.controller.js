@@ -11,7 +11,7 @@ try {
       const accessToken = await user.generateAccessToken()
       const refreshToken = await user.generateRefreshToken()
 
-      console.log(accessToken);
+    //   console.log(accessToken);
       
 
       user.refreshToken = refreshToken
@@ -245,9 +245,40 @@ const generateRefreshToken = asyncHandler (async ( req, res ) => {
     
 })
 
+const forgotPassword = asyncHandler (async (req, res) => {
+    const { oldPassword, newPassword } = req.body
+
+    const user = await User.findById(req.user?._id)
+
+    if (!user) {
+        throw new ApiError(401, "Unauthorized request")
+        
+    }
+
+   const isPasswordCorrect = await user.isPasswordCorrect(oldPassword)
+
+   if (!isPasswordCorrect) {
+    throw new ApiError(400, "Enter a valid password")
+   }
+
+   user.password = newPassword
+
+   await user.save({ validateBeforeSave: false })
+
+   return res.status(201)
+   .json(
+    new ApiResponse(200, {}, "password updated successfully done")
+   )
+   
+
+    
+
+})
+
 export {
     userRegister,
     userLogin,
     loggedOutUser,
-    generateRefreshToken
+    generateRefreshToken,
+    forgotPassword
 }
