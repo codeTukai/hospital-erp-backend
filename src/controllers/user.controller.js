@@ -275,10 +275,45 @@ const changeCurrentPassword = asyncHandler (async (req, res) => {
 
 })
 
+const getCurrentUser = asyncHandler (async (req, res) => {
+     return res.status(200)
+     .json(200, req.user, "Fetch user successfully done")
+})
+
+const updatedUserProfile = asyncHandler (async (req, res) => {
+    const {fullName, email, mobile} = req.body
+
+    if (!fullName || !email || !mobile) {
+        throw new ApiError(500, "All fields are required")
+    }
+
+     const user = await User.findByIdAndDelete(
+        req.user?._id,
+        {
+            $set:{
+                fullName,
+                email,
+                mobile
+            },
+            
+        },
+        {
+            new : true
+        }
+    ).select("-password")
+
+    return res.status(201)
+    .json(
+        new ApiResponse(200, user, "User updated Successfully")
+    )
+})
+
 export {
     userRegister,
     userLogin,
     loggedOutUser,
     generateRefreshToken,
-    changeCurrentPassword
+    changeCurrentPassword,
+    getCurrentUser,
+    updatedUserProfile
 }
