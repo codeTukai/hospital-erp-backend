@@ -308,6 +308,39 @@ const updatedUserProfile = asyncHandler (async (req, res) => {
     )
 })
 
+const updateAvatar = asyncHandler( async (req, res) => {
+    
+
+    const avatarFilePath = req.files?.avatar?.[0].path
+
+     if(!avatarFilePath){
+        throw new ApiError(500, "Avatar required")
+    }
+
+   const avatar = await uploadCloudinary(avatarFilePath)
+
+    if(!avatar.url){
+        throw new ApiError(500, "Avatar required")
+    }
+
+    User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set :{
+                avatar:avatar.url
+            }
+        },
+        {
+            new: true
+        }
+    ).select("-password")
+
+     return res.status(201).json(
+        new ApiResponse(200, avatar, "Avatar updated successfully")
+     )
+    
+})
+
 export {
     userRegister,
     userLogin,
@@ -315,5 +348,6 @@ export {
     generateRefreshToken,
     changeCurrentPassword,
     getCurrentUser,
-    updatedUserProfile
+    updatedUserProfile,
+    updateAvatar
 }

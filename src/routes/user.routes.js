@@ -4,6 +4,7 @@ import {
      generateRefreshToken, 
      getCurrentUser,
      loggedOutUser,
+     updateAvatar,
      updatedUserProfile,
      userLogin,
      userRegister }
@@ -31,6 +32,7 @@ userRouter.route("/logOut").post(verifyJWT, loggedOutUser)
 userRouter.route("/refresh-token").post(generateRefreshToken)
 userRouter.route("/change-password").post(verifyJWT, changeCurrentPassword)
 userRouter.route("/get-user").get(verifyJWT, getCurrentUser)
-userRouter.route("/update-profile").put(updatedUserProfile)
+userRouter.route("/update-profile").put(verifyJWT, updatedUserProfile)
+userRouter.route("/update-avatar").put(verifyJWT,upload.single("avatar"), updateAvatar)
 
 export default userRouter;
